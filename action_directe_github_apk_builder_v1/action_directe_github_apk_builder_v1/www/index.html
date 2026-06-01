@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Action Directe — Mobile V1 Test</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0B110E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Action Directe">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar" id="topbar">
+      <div class="brand">
+        <div class="logoBox"><img src="assets/logo.svg" alt="Logo Action Directe"></div>
+        <div>
+          <h1>Action Directe</h1>
+          <p>poutre · cycle · timer</p>
+        </div>
+      </div>
+      <div class="profilePill" id="profilePill">N3 · Bloc</div>
+    </header>
+
+    <main class="content">
+      <section class="page active" id="home">
+        <div class="homeScreen">
+          <img src="assets/home.png" alt="Action Directe — Accueil" class="homeImage">
+          <button class="homeStart" id="homeStart" aria-label="Démarrer"></button>
+        </div>
+      </section>
+
+      <section class="page" id="eval">
+        <div class="hero">
+          <div class="eyebrow">Évaluation du niveau</div>
+          <h2>Définir ton point de départ.</h2>
+          <p>Choisis ton objectif et ton niveau estimé, ou lance le test guidé.</p>
+        </div>
+
+        <div class="card">
+          <label>Objectif</label>
+          <div class="grid2">
+            <button class="choice active" data-goal="bloc">Bloc<small>force doigts</small></button>
+            <button class="choice" data-goal="difficulte">Difficulté<small>résistance</small></button>
+          </div>
+        </div>
+
+        <div class="card">
+          <label>Niveau estimé</label>
+          <div class="grid5" id="levelChoices"></div>
+        </div>
+
+        <button class="primary" id="createProgram">Créer ma programmation</button>
+        <button class="dark" id="openTest">Test guidé 7 s</button>
+      </section>
+
+      <section class="page" id="test">
+        <div class="hero">
+          <div class="eyebrow">Test guidé</div>
+          <h2>Suspends, puis réponds.</h2>
+          <p>Les réponses se débloquent uniquement après les 7 secondes.</p>
+        </div>
+
+        <div class="boardShell">
+          <div class="board"><img src="assets/board.jpg" alt="Board"><div id="testOverlay"></div></div>
+        </div>
+
+        <div class="timerPanel">
+          <div class="phaseLine"><span class="phase work" id="testLevel">N1</span><span class="phase" id="testPhase">Prêt</span></div>
+          <div class="seconds" id="testSeconds">7</div>
+          <div class="holdName" id="testHold">P1 — Bac pleine main</div>
+          <div class="holdDetails" id="testDetails">4 doigts · main ouverte</div>
+          <div class="pills"><span class="miniPill" id="testStep">Étape 1/5</span><span class="miniPill">7 s</span><span class="miniPill">Réponse après effort</span></div>
+          <div class="bar"><div id="testProgress"></div></div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="startTest">Démarrer la suspension</button>
+          <button id="backEval">Retour</button>
+        </div>
+
+        <div class="card">
+          <label>Ressenti</label>
+          <div class="grid2">
+            <button class="testAnswer" data-answer="easy" disabled>Trop facile</button>
+            <button class="testAnswer" data-answer="ok" disabled>Correct</button>
+            <button class="testAnswer" data-answer="limit" disabled>Limite</button>
+            <button class="testAnswer dangerSoft" data-answer="fail" disabled>Impossible</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="result">
+        <div class="card center">
+          <label>Résultat</label>
+          <div class="resultBadge" id="resultBadge">N3</div>
+          <h2 id="resultTitle">Intermédiaire</h2>
+          <p id="resultText">Profil adapté à une progression régulière.</p>
+        </div>
+        <div class="hero">
+          <div class="eyebrow">Programmation</div>
+          <h2>Cycle 4 semaines.</h2>
+          <p>La séance lancée sera toujours la prochaine séance non réalisée.</p>
+        </div>
+        <button class="primary" id="openProgram">Voir la programmation</button>
+      </section>
+
+      <section class="page" id="prog">
+        <div class="hero">
+          <div class="eyebrow">Prochaine séance</div>
+          <h2 id="nextTitle">Aucune programmation</h2>
+          <p id="nextSub">Crée une programmation depuis l’évaluation.</p>
+          <div class="dateInfo" id="cycleDateInfo">Cycle glissant · départ non défini</div>
+          <div class="included" id="includedWarmup">Échauffement spécifique inclus dans le timer</div>
+          <div class="stats" id="nextStats">
+            <div class="stat"><small>prises</small><b id="statHolds">—</b></div>
+            <div class="stat"><small>format</small><b id="statFormat">—</b></div>
+            <div class="stat"><small>repos</small><b id="statRest">—</b></div>
+          </div>
+          <button class="primary" id="launchSession">Lancer cette séance</button>
+          <button id="postponeSession" style="display:none">Reporter cette séance</button>
+        </div>
+
+        <div class="weekStrip" id="weekStrip"></div>
+        <div class="card" id="weekCard">
+          <label>Séances de la semaine</label>
+          <div id="weekList"></div>
+          <button id="toggleOff">Voir semaine complète</button>
+        </div>
+      </section>
+
+      <section class="page" id="timer">
+        <div class="boardShell">
+          <div class="board"><img src="assets/board.jpg" alt="Board"><div id="timerOverlay"></div></div>
+        </div>
+
+        <div class="timerPanel">
+          <div class="phaseLine"><span class="phase warmup" id="blockLabel">Échauffement</span><span class="phase" id="phaseLabel">Prêt</span></div>
+          <div class="seconds" id="timerSeconds">5</div>
+          <div class="holdName" id="timerHold">—</div>
+          <div class="holdDetails" id="timerDetails">—</div>
+          <div class="pills"><span class="miniPill" id="timerSet">Étape 1/1</span><span class="miniPill" id="timerRep">Rép 1/1</span><span class="miniPill" id="timerRest">Repos —</span></div>
+          <div class="bar"><div id="timerProgress"></div></div>
+        </div>
+
+        <div class="actions" id="readyActions"><button class="primary" id="startTimer">Démarrer</button><button id="backProgram">Retour</button></div>
+        <div class="actions" id="runActions"><button id="pauseTimer">Pause</button><button class="danger" id="stopTimer">Stop</button></div>
+      </section>
+
+      <section class="page" id="review">
+        <div class="hero">
+          <div class="eyebrow">Bilan</div>
+          <h2>Clore la séance.</h2>
+          <p>Deux retours suffisent pour préparer la suite.</p>
+        </div>
+
+        <div class="card">
+          <label>Comment c’était ?</label>
+          <div class="stack" id="feedbackChoices">
+            <button class="choice" data-feedback="easy">Trop facile</button>
+            <button class="choice active" data-feedback="ok">Bien dosée</button>
+            <button class="choice" data-feedback="hard">Trop dure</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <label>État des doigts</label>
+          <div class="grid2" id="fingerChoices">
+            <button class="choice active" data-finger="ras">RAS</button>
+            <button class="choice" data-finger="tire">Ça tire</button>
+          </div>
+          <button class="choice dangerSoft wide" data-finger="signal">Mauvais signal</button>
+        </div>
+
+        <div class="note" id="adviceBox">La séance suivante sera conservée telle quelle.</div>
+        <button class="primary" id="saveReview">Enregistrer</button>
+      </section>
+
+      <section class="page" id="cycle">
+        <div class="hero">
+          <div class="eyebrow">Fin de cycle</div>
+          <h2 id="cycleTitle">Analyse du cycle.</h2>
+          <p id="cycleSub">Décision pondérée pour le prochain cycle.</p>
+        </div>
+
+        <div class="card">
+          <label>Résumé 4 semaines</label>
+          <div class="cycleGrid">
+            <div><small>Régularité</small><b id="cycleRegularity">—</b></div>
+            <div><small>Ressenti</small><b id="cycleFeeling">—</b></div>
+            <div><small>Doigts</small><b id="cycleFingers">—</b></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <label>Décision proposée</label>
+          <div class="decisionBadge" id="cycleDecision">Maintien</div>
+          <p class="muted" id="cycleExplain">Le prochain cycle sera généré à partir des bilans.</p>
+        </div>
+
+        <div class="card">
+          <label>Levier principal</label>
+          <div class="lever" id="cycleLever">Aucun changement majeur</div>
+          <p class="muted">Règle : un seul levier est modifié entre deux cycles.</p>
+        </div>
+
+        <button class="primary" id="nextCycle">Générer le cycle suivant</button>
+        <button id="cycleBack">Revenir à la programmation</button>
+      </section>
+
+      <section class="page" id="settings">
+        <div class="hero">
+          <div class="eyebrow">V1 mobile</div>
+          <h2>Rappels et calendrier.</h2>
+          <p>Le cycle démarre le jour réel où tu le lances. Les séances gardent leur espacement.</p>
+        </div>
+
+        <div class="card">
+          <label>Notifications</label>
+          <div class="settingsRow">
+            <div>
+              <b>Rappels jour J</b>
+              <span>Notification le matin d’une séance prévue.</span>
+            </div>
+            <button id="enableNotifications" class="smallButton">Activer</button>
+          </div>
+
+          <div class="settingsGrid">
+            <div>
+              <label>Rappel principal</label>
+              <input type="time" id="reminderTime" value="09:00">
+            </div>
+            <div>
+              <label>Relance douce</label>
+              <input type="time" id="followUpTime" value="18:00">
+            </div>
+          </div>
+
+          <div class="settingsRow">
+            <div>
+              <b>Relance si non faite</b>
+              <span>Une seule relance le jour J, pas de spam.</span>
+            </div>
+            <button id="toggleFollowUp" class="smallButton">Oui</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <label>Cycle glissant</label>
+          <div class="note">
+            3 séances : J+0, J+2, J+5. 2 séances : J+0, J+3. Si une séance est ratée, on décale la suite au lieu de compresser.
+          </div>
+          <button id="rebuildDatesBtn">Recalculer les dates du cycle</button>
+        </div>
+      </section>
+
+    </main>
+
+    <nav class="nav" id="nav">
+      <button data-page="home" class="active">Accueil</button>
+      <button data-page="eval">Éval.</button>
+      <button data-page="result">Résultat</button>
+      <button data-page="prog">Prog.</button>
+      <button data-page="timer">Timer</button>
+      <button data-page="review">Bilan</button>
+      <button data-page="cycle">Cycle</button>
+      <button data-page="settings">Réglages</button>
+    </nav>
+  </div>
+
+  <script>
+    window.ACTION_DIRECTE_DATA = {"BOARD_W": 1448, "BOARD_H": 1086, "HOLD_ZONES": {"1": [{"x": 154, "y": 324, "w": 190, "h": 58}, {"x": 1094, "y": 322, "w": 190, "h": 58}], "2": [{"x": 123, "y": 393, "w": 170, "h": 55}, {"x": 1145, "y": 394, "w": 170, "h": 55}], "3": [{"x": 85, "y": 472, "w": 210, "h": 65}, {"x": 1143, "y": 473, "w": 210, "h": 65}], "4": [{"x": 206, "y": 574, "w": 210, "h": 58}, {"x": 1017, "y": 576, "w": 210, "h": 58}], "5": [{"x": 319, "y": 326, "w": 245, "h": 75}, {"x": 871, "y": 326, "w": 245, "h": 75}], "6": [{"x": 321, "y": 475, "w": 95, "h": 55}, {"x": 1020, "y": 477, "w": 95, "h": 55}], "7": [{"x": 442, "y": 574, "w": 105, "h": 58}, {"x": 891, "y": 574, "w": 105, "h": 58}], "8": [{"x": 442, "y": 477, "w": 160, "h": 55}, {"x": 841, "y": 477, "w": 150, "h": 55}], "9": [{"x": 564, "y": 574, "w": 150, "h": 58}, {"x": 726, "y": 575, "w": 150, "h": 58}], "10": [{"x": 624, "y": 478, "w": 185, "h": 55}], "11": [{"x": 577, "y": 395, "w": 110, "h": 55}, {"x": 750, "y": 394, "w": 110, "h": 55}], "13": [{"x": 562, "y": 334, "w": 312, "h": 50}]}, "HOLDS": {"1": {"name": "Bac pleine main", "fingers": "4 doigts", "grip": "main ouverte", "difficulty": "très facile"}, "2": {"name": "Petite réglette 10 mm", "fingers": "4 doigts", "grip": "semi-ouverte", "difficulty": "expert"}, "3": {"name": "Gros bac 40 mm", "fingers": "4 doigts", "grip": "main ouverte", "difficulty": "facile"}, "4": {"name": "Réglette 15 mm", "fingers": "4 doigts", "grip": "semi-ouverte", "difficulty": "difficile"}, "5": {"name": "Pan incliné latéral", "fingers": "4 doigts", "grip": "pleine main ouverte", "difficulty": "difficile"}, "6": {"name": "Grosse poche bi-doigts 45 mm", "fingers": "2 doigts", "grip": "bi-doigts semi-ouvert", "difficulty": "moyen"}, "7": {"name": "Poche bi-doigts 19 mm", "fingers": "2 doigts", "grip": "bi-doigts semi-ouvert", "difficulty": "expert"}, "8": {"name": "Poche 3 doigts 40 mm", "fingers": "3 doigts", "grip": "3 doigts main ouverte", "difficulty": "facile à moyen"}, "9": {"name": "Poche 3 doigts 14 mm", "fingers": "3 doigts", "grip": "3 doigts semi-ouverte", "difficulty": "expert"}, "10": {"name": "Poche centrale asymétrique", "fingers": "4 doigts", "grip": "asymétrique avec assistance", "difficulty": "transition"}, "11": {"name": "Poches 3 doigts hautes", "fingers": "3 doigts", "grip": "3 doigts", "difficulty": "moyen"}, "13": {"name": "Pan incliné central", "fingers": "2 mains", "grip": "pleine main ouverte", "difficulty": "confirmé"}}, "SESSION_TEMPLATES": {"bloc": {"1": {"name": "Bloc N1 — reprise", "sets": ["1", "3"], "reps": 4, "hang": 6, "shortRest": 4, "longRest": 120}, "2": {"name": "Bloc N2 — débutant", "sets": ["1", "3", "8"], "reps": 5, "hang": 7, "shortRest": 3, "longRest": 135}, "3": {"name": "Bloc N3 — force doigts", "sets": ["6", "6", "11"], "reps": 5, "hang": 7, "shortRest": 3, "longRest": 150}, "4": {"name": "Bloc N4 — confirmé", "sets": ["5", "5", "4", "13"], "reps": 6, "hang": 7, "shortRest": 3, "longRest": 180}, "5": {"name": "Bloc N5 — expert", "sets": ["9", "7", "5", "4"], "reps": 6, "hang": 7, "shortRest": 3, "longRest": 180}}, "difficulte": {"1": {"name": "Diff N1 — volume léger", "sets": ["1", "3", "1"], "reps": 4, "hang": 6, "shortRest": 4, "longRest": 90}, "2": {"name": "Diff N2 — endurance facile", "sets": ["1", "3", "8", "3"], "reps": 5, "hang": 7, "shortRest": 3, "longRest": 120}, "3": {"name": "Diff N3 — endurance", "sets": ["3", "8", "6", "11"], "reps": 6, "hang": 7, "shortRest": 3, "longRest": 120}, "4": {"name": "Diff N4 — résistance", "sets": ["3", "8", "6", "11", "4"], "reps": 6, "hang": 7, "shortRest": 3, "longRest": 120}, "5": {"name": "Diff N5 — résistance haute", "sets": ["3", "8", "6", "11", "4", "9"], "reps": 6, "hang": 7, "shortRest": 3, "longRest": 120}}}};
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>

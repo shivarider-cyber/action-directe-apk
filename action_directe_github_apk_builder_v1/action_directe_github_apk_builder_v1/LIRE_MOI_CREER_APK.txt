@@ -1,0 +1,13 @@
+ACTION DIRECTE — APK BUILDER V3 CORRIGE
+
+Correction :
+- TypeScript ajouté
+- webDir corrigé : www
+- ancien dossier android supprimé automatiquement
+
+Étapes :
+1. Décompresser ce ZIP
+2. Ouvrir le dossier
+3. Double-cliquer BUILD_APK_WINDOWS.bat
+4. APK finale :
+   android/app/build/outputs/apk/debug/app-debug.apk
